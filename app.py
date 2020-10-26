@@ -179,7 +179,7 @@ def login():
 	    return(str(e))
 
 @app.route("/api/user/create", methods=['POST'])
-def userCreate(current_user):
+def userCreate():
     user = Users(name= request.form.get('nome'), cpf= request.form.get('cpf'), crm = request.form.get('crm'), email = request.form.get('email'), password= generate_password_hash(request.form.get('password')))
     db.session.add(user)
     db.session.commit()
