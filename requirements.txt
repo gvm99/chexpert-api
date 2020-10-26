@@ -8,6 +8,6 @@ requests
 flask_sqlalchemy
 flask_script
 flask_migrate
-pip install psycopg2-binary
+psycopg2-binary
 werkzeug
 PyJWT
