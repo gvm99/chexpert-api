@@ -1,3 +1,17 @@
+
+from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, flash, request, jsonify
+from database import db
+
+DEBUG = True
+app = Flask(__name__)
+app.config.from_object(__name__)
+
+app.config.from_object('config.DevelopmentConfig')#os.environ['APP_SETTINGS'])
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+
+from classe import Historico, Users
 import json
 import numpy as np
 import cv2
@@ -6,14 +20,12 @@ import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 from PIL import Image
-from flask import Flask, render_template, flash, request
+import uuid
 import os
 import requests
 import pickle as serializer
-
-DEBUG = True
-app = Flask(__name__)
-app.config.from_object(__name__)
+from werkzeug.security import generate_password_hash, check_password_hash
+import helper
 
 class DenseNet121(nn.Module):
     """Model modified.
@@ -116,12 +128,15 @@ class HeatmapGenerator ():
          
 
 @app.route("/api/predict", methods=['POST'])
-def api():
+@helper.token_required
+def api(current_user):
     f = request.files['exame']
-    f.save('static/'+f.filename)
+    code = str(uuid.uuid1())
+    f.save('static/'+code+f.filename)
     
-    pathInputImage = 'static/'+f.filename
-    pathOutputImage = 'static/h-'+f.filename
+    
+    pathInputImage = 'static/' + code + f.filename
+    pathOutputImage = 'static/h-' + code + f.filename
 
     pathModel = "model_zeroes_1epoch_densenet.pth.tar"
 
@@ -133,9 +148,45 @@ def api():
     retorno = {}
     retorno['predicao'] = h.generate(pathInputImage, pathOutputImage, imgtransCrop)
     retorno['heatmap'] = 'https://d9-guivm.com.br/'+pathOutputImage
+    retorno['image'] = 'https://d9-guivm.com.br/'+pathInputImage
     
+
+    historico = Historico(name=request.form.get('nome'),cpf= request.form.get('cpf'),tipoExame = request.form.get('tipoExame'), response = str(retorno))
+    db.session.add(historico)
+    db.session.commit()
+    print("Histórico adicionado".format(historico.id))
+
     return app.response_class(
         response = json.dumps(retorno,indent=True),
+        status=200,
+        mimetype='application/json'
+    )
+
+@app.route("/api/list")
+@helper.token_required
+def get_all(current_user):
+    try:
+        historicos = Historico.query.all()
+        return  jsonify([e.serialize() for e in historicos])
+    except Exception as e:
+	    return(str(e))
+
+@app.route("/api/user/login", methods=['POST'])
+def login():
+    try:
+        return helper.auth()
+    except Exception as e:
+	    return(str(e))
+
+@app.route("/api/user/create", methods=['POST'])
+@helper.token_required
+def userCreate(current_user):
+    user = Users(name= request.form.get('nome'), cpf= request.form.get('cpf'), crm = request.form.get('crm'), email = request.form.get('email'), password= generate_password_hash(request.form.get('password')))
+    db.session.add(user)
+    db.session.commit()
+
+    return app.response_class(
+        response = json.dumps({"status":"OK"},indent=True),
         status=200,
         mimetype='application/json'
     )

@@ -5,3 +5,9 @@ opencv-python-headless
 http://download.pytorch.org/whl/cpu/torch-0.4.1-cp36-cp36m-linux_x86_64.whl
 torchvision==0.2.1
 requests
+flask_sqlalchemy
+flask_script
+flask_migrate
+pip install psycopg2-binary
+werkzeug
+PyJWT
