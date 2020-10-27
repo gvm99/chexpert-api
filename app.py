@@ -10,7 +10,7 @@ app.config.from_object(__name__)
 
 app.config.from_object('config.DevelopmentConfig')#os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-CORS(app, support_credentials=True)
+CORS(app)
 
 db.init_app(app)
 
