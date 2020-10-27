@@ -138,7 +138,6 @@ def api(current_user):
     code = str(uuid.uuid1())
     f.save('static/'+code+f.filename)
     
-    
     pathInputImage = 'static/' + code + f.filename
     pathOutputImage = 'static/h-' + code + f.filename
 
@@ -151,9 +150,12 @@ def api(current_user):
     
     retorno = {}
     retorno['predicao'] = h.generate(pathInputImage, pathOutputImage, imgtransCrop)
-    retorno['heatmap'] = 'https://d9-guivm.com.br/'+pathOutputImage
-    retorno['image'] = 'https://d9-guivm.com.br/'+pathInputImage
-    
+    retorno['heatmap'] = 'https://tcc-guivm.herokuapp.com/'+pathOutputImage
+    retorno['image'] = 'https://tcc-guivm.herokuapp.com/'+pathInputImage
+    retorno['nomePac'] = request.form.get('nome')
+    retorno['cpfPac'] = request.form.get('cpf')
+    retorno['tipoExame'] = request.form.get('tipoExame')
+    retorno['nomeMedico'] = current_user.name
 
     historico = Historico(name=request.form.get('nome'),cpf= request.form.get('cpf'),tipoExame = request.form.get('tipoExame'), response = str(retorno))
     db.session.add(historico)

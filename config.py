@@ -8,7 +8,7 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = '1234'
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL'] #'postgresql://postgres:gvm99@localhost/tcc'
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL'] 
     key = ''.join( random.choice(string.ascii_letters + string.digits + string.ascii_uppercase) for i in range(12) )
 
 class ProductionConfig(Config):
