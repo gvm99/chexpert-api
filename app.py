@@ -132,7 +132,7 @@ class HeatmapGenerator ():
 
 @app.route("/api/predict", methods=['POST'])
 @helper.token_required
-@cross_origin(supports_credentials=True)
+@cross_origin()
 def api(current_user):
     f = request.files['exame']
     code = str(uuid.uuid1())
@@ -160,7 +160,6 @@ def api(current_user):
     historico = Historico(name=request.form.get('nome'),cpf= request.form.get('cpf'),tipoExame = request.form.get('tipoExame'), response = str(retorno))
     db.session.add(historico)
     db.session.commit()
-    print("Histórico adicionado".format(historico.id))
 
     return app.response_class(
         response = json.dumps(retorno,indent=True),
@@ -170,7 +169,7 @@ def api(current_user):
 
 @app.route("/api/list")
 @helper.token_required
-@cross_origin(supports_credentials=True)
+@cross_origin()
 def get_all(current_user):
     try:
         historicos = Historico.query.all()
@@ -179,7 +178,7 @@ def get_all(current_user):
 	    return(str(e))
 
 @app.route("/api/user/login", methods=['POST'])
-@cross_origin(supports_credentials=True)
+@cross_origin()
 def login():
     try:
         return helper.auth()
@@ -187,7 +186,7 @@ def login():
 	    return(str(e))
 
 @app.route("/api/user/create", methods=['POST'])
-@cross_origin(supports_credentials=True)
+@cross_origin()
 def userCreate():
     user = Users(name= request.form.get('nome'), cpf= request.form.get('cpf'), crm = request.form.get('crm'), email = request.form.get('email'), password= generate_password_hash(request.form.get('password')))
     db.session.add(user)
