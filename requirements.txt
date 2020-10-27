@@ -11,3 +11,4 @@ flask_migrate
 psycopg2-binary
 werkzeug
 PyJWT
+flask-cors

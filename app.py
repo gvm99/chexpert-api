@@ -2,6 +2,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, flash, request, jsonify
 from database import db
+from flask_cors import CORS, cross_origin
 
 DEBUG = True
 app = Flask(__name__)
@@ -9,6 +10,8 @@ app.config.from_object(__name__)
 
 app.config.from_object('config.DevelopmentConfig')#os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+CORS(app, support_credentials=True)
+
 db.init_app(app)
 
 from classe import Historico, Users
@@ -129,6 +132,7 @@ class HeatmapGenerator ():
 
 @app.route("/api/predict", methods=['POST'])
 @helper.token_required
+@cross_origin(supports_credentials=True)
 def api(current_user):
     f = request.files['exame']
     code = str(uuid.uuid1())
@@ -164,6 +168,7 @@ def api(current_user):
 
 @app.route("/api/list")
 @helper.token_required
+@cross_origin(supports_credentials=True)
 def get_all(current_user):
     try:
         historicos = Historico.query.all()
@@ -172,6 +177,7 @@ def get_all(current_user):
 	    return(str(e))
 
 @app.route("/api/user/login", methods=['POST'])
+@cross_origin(supports_credentials=True)
 def login():
     try:
         return helper.auth()
@@ -179,6 +185,7 @@ def login():
 	    return(str(e))
 
 @app.route("/api/user/create", methods=['POST'])
+@cross_origin(supports_credentials=True)
 def userCreate():
     user = Users(name= request.form.get('nome'), cpf= request.form.get('cpf'), crm = request.form.get('crm'), email = request.form.get('email'), password= generate_password_hash(request.form.get('password')))
     db.session.add(user)
