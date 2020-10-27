@@ -7,7 +7,6 @@ from flask_cors import CORS, cross_origin
 DEBUG = True
 app = Flask(__name__)
 app.config.from_object(__name__)
-
 app.config.from_object('config.DevelopmentConfig')#os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
@@ -131,8 +130,8 @@ class HeatmapGenerator ():
          
 
 @app.route("/api/predict", methods=['POST'])
-@helper.token_required
 @cross_origin()
+@helper.token_required
 def api(current_user):
     f = request.files['exame']
     code = str(uuid.uuid1())
@@ -168,8 +167,8 @@ def api(current_user):
     )
 
 @app.route("/api/list")
-@helper.token_required
 @cross_origin()
+@helper.token_required
 def get_all(current_user):
     try:
         historicos = Historico.query.all()
