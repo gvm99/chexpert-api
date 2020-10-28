@@ -159,6 +159,8 @@ def api(current_user):
     historico = Historico(name=request.form.get('nome'),cpf= request.form.get('cpf'),tipoExame = request.form.get('tipoExame'), response = str(retorno))
     db.session.add(historico)
     db.session.commit()
+    
+    retorno['id'] = historico.id
 
     return app.response_class(
         response = json.dumps(retorno,indent=True),
