@@ -186,6 +186,25 @@ def login():
     except Exception as e:
 	    return(str(e))
 
+@app.route("/api/list/<id_>")
+@cross_origin()
+@helper.token_required
+def get_by_id(current_user, id_):
+    try:
+        hist=Historico.query.filter_by(id=id_).first()
+        return jsonify(hist.serialize())
+    except Exception as e:
+	    return(str(e))
+
+@app.route("/api/user/logged")
+@cross_origin()
+@helper.token_required
+def get_user_logged(current_user):
+    try:
+        return jsonify(current_user.serialize())
+    except Exception as e:
+	    return(str(e))
+
 @app.route("/api/user/create", methods=['POST'])
 @cross_origin()
 def userCreate():
