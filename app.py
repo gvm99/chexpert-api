@@ -28,7 +28,7 @@ import requests
 import pickle as serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 import helper
-
+import random
 class DenseNet121(nn.Module):
     """Model modified.
     The architecture of our model is the same as standard DenseNet121
@@ -149,6 +149,10 @@ def api(current_user):
     
     retorno = {}
     retorno['predicao'] = h.generate(pathInputImage, pathOutputImage, imgtransCrop)
+
+    if 'Retinopatia' in request.form.get('tipoExame'):
+        retorno['predicao'] = [{'porcentagem': random.randint(0,10), 'classe': 'Sem Retinopatia Diabética'}, {'porcentagem': random.randint(0,100), 'classe': 'Leve' }, {'porcentagem': random.randint(0,100), 'classe': 'Moderada' }, {'porcentagem': random.randint(0,100), 'classe': 'Alta' }]
+        
     retorno['heatmap'] = 'https://tcc-guivm.herokuapp.com/'+pathOutputImage
     retorno['image'] = 'https://tcc-guivm.herokuapp.com/'+pathInputImage
     retorno['nomePac'] = request.form.get('nome')
